@@ -59,6 +59,7 @@ RUN { \
     echo 'memory_limit = 768M'; \
 		echo 'realpath_cache_size = 4M'; \
 		echo 'realpath_cache_ttl = 480'; \
+		echo 'sendmail_path = /usr/sbin/ssmtp -t'; \
 	} > /usr/local/etc/php/conf.d/d8-settings.ini
 
 # install ssmtp
