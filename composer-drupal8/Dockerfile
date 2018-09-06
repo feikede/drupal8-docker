@@ -102,7 +102,7 @@ RUN { \
 	} >> /var/www/html/web/sites/default/settings.php
 
 # install modules everbody needs :-)
-RUN cd /var/www/html && php /usr/bin/composer require drupal/token drupal/pathauto drupal/metatag drupal/field_group drupal/paragraphs drupal/webform
+RUN cd /var/www/html && php /usr/bin/composer require drupal/token drupal/pathauto drupal/metatag drupal/field_group drupal/paragraphs drupal/webform drupal/flag
 
 # stuff drupal needs to install
 RUN mkdir -p /var/www/html/web/sites/default/files/translations && chown -R 33 /var/www/html/web/sites/default/files && chown 33 /var/www/html/web/sites/default/settings.php
@@ -121,8 +121,10 @@ RUN { \
 	} > /etc/apache2/sites-available/000-default.conf
 
 # now expose files
+VOLUME /var/www/html/web/themes/custom
+VOLUME /var/www/html/web/modules/custom
 VOLUME /var/www/html/web/publicfs
-EXPOSE 80
+EXPOSE 80 443
 
 # By default start up apache in the foreground, override with /bin/bash for interative.
 CMD /usr/sbin/apache2ctl -D FOREGROUND
