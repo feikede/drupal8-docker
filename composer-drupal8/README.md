@@ -44,3 +44,14 @@ Now, if you want to start the container with the publicfs directory mounted to y
 docker run --link db:mysql --name drupal8 -p 8084:80 -v $PWD/files:/var/www/html/web/publicfs -d feikede/drupal8-docker
 chmod 777 ./files
 ```
+
+## Run drush commands
+You can use drush inside of the container, keep in mind that your changes to non-volume filesystems will be lost after removing the container.
+
+```bash
+rainer@tuxtop ~/src/asde8modules $ docker exec -it drupal8 bash
+root@8b4cad8b87eb:/var/www/html# cd web
+root@8b4cad8b87eb:/var/www/html/web# ../vendor/drush/drush/drush cr
+ [success] Cache rebuild complete.
+root@8b4cad8b87eb:/var/www/html/web# 
+```
