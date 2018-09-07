@@ -102,7 +102,7 @@ RUN { \
 	} >> /var/www/html/web/sites/default/settings.php
 
 # install modules everbody needs :-)
-RUN cd /var/www/html && php /usr/bin/composer require drupal/token drupal/pathauto drupal/metatag drupal/field_group drupal/paragraphs drupal/webform drupal/flag
+RUN cd /var/www/html && php /usr/bin/composer require drupal/token drupal/pathauto drupal/metatag drupal/field_group drupal/paragraphs drupal/webform drupal/flag drupal/bootstrap
 
 # stuff drupal needs to install
 RUN mkdir -p /var/www/html/web/sites/default/files/translations && chown -R 33 /var/www/html/web/sites/default/files && chown 33 /var/www/html/web/sites/default/settings.php
