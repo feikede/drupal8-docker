@@ -55,3 +55,40 @@ root@8b4cad8b87eb:/var/www/html/web# ../vendor/drush/drush/drush cr
  [success] Cache rebuild complete.
 root@8b4cad8b87eb:/var/www/html/web# 
 ```
+
+## Run drupal console commands
+You can use drupal console commands inside of the container. Keep in mind that your changes to non-volume filesystems will be lost after removing the container.
+
+```bash
+rainer@tuxtop ~/src/asde8modules $ docker exec -it drupal8 bash
+root@8b4cad8b87eb:/var/www/html# cd web
+root@8b4cad8b87eb:/var/www/html/web# ../vendor/drupal/console/bin/drupal cache:rebuild
+
+ Rebuilding cache(s), wait a moment please.
+                                                                                                                        
+ [OK] Done clearing cache(s).                                                                                           
+
+root@8b4cad8b87eb:/var/www/html/web# 
+```
+
+## Run composer commands in container
+Also, you can run composer commands in the container, like so:
+
+```bash
+rainer@tuxtop ~/src/asde8modules $ docker exec -it drupal8 bash
+root@8b4cad8b87eb:/var/www/html# composer require drupal/devel
+Using version ^1.2 for drupal/devel
+./composer.json has been updated
+> DrupalProject\composer\ScriptHandler::checkComposerVersion
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+Package operations: 1 install, 0 updates, 0 removals
+  - Installing drupal/devel (1.2.0): Downloading (100%)         
+Writing lock file
+Generating autoload files
+> DrupalProject\composer\ScriptHandler::createRequiredFiles
+root@8b4cad8b87eb:/var/www/html# 
+```
+
+Keep in mind, that these contributed modules will be installed at the non-mounted path at /modules/contributed. But that's fantastic for testing purposes and upgrade szenarios.
+
