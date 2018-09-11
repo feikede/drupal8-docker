@@ -31,6 +31,55 @@ and the contributed theme
 
 * Bootstrap
 
+## Even more quick with docker-compose
+
+You may use this compose file to get Drupal 8 with mariadb and phpmyadmin up and running very fast:
+
+```yml
+version: '3'
+services:
+  db:
+    image: "mariadb"
+    container_name: db
+    restart: unless-stopped
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mariadb
+  asde8:
+    image: "feikede/drupal8-docker"
+    container_name: asde8
+    restart: unless-stopped
+    depends_on:
+      - db
+    links:
+      - db
+    volumes:
+      - ./publicfs:/var/www/html/web/publicfs
+      - ./custom_modules:/var/www/html/web/modules/custom
+      - ./custom_themes:/var/www/html/web/themes/custom
+    ports:
+      - 8080:80    
+    environment:
+      DOCUMENT_ROOT: /var/www/html
+      ENVIRONMENT: dev
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    depends_on:
+      - db
+    environment:
+      PMA_USER: root
+      PMA_PASSWORD: mariadb
+      PMA_HOST: db
+    restart: unless-stopped
+    links:
+      - db
+    ports:
+      - 8082:80
+```
+Go to "http://localhost:8080" for your Drupal 8 site or to "http://localhost:8082" for phpMyAdmin. The db-host for your installation is "db" here.
+
 ## Persistent Volumes
 Usually you want to keep some of the installation's files beyond container removal. I propose to use three volumes:
 
