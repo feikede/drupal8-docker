@@ -1,10 +1,8 @@
-# Run Drupal 8 in Docker in development mode without caching and xdebug enabled
+# Drupal 8 build with composer and drush
 
-Use my docker image from docker hub at https://hub.docker.com/r/feikede/drupal-dev/ - it should run out of the box.
+Use docker build to build it. Runs out of the box with apache and php7.
 
-Settings.local.php is installed and activated with cache-backend /dev/null. CSS and JS aggregation is disabled. XDebug port is 9000 (default).
-
-## Quickstart Drupal 8, composer, drush with docker run
+## Quickstart with docker run
 First start a db:
 ```bash
 docker run --name db -e MYSQL_ROOT_PASSWORD=mypassword  -d mariadb
@@ -12,15 +10,14 @@ docker run --name db -e MYSQL_ROOT_PASSWORD=mypassword  -d mariadb
 
 Then start Drupal 8 container with db link
 ```bash
-docker run --link db:mysql --name drupal8 -p 8084:80 -d feikede/drupal-dev
+docker run --link db:mysql --name drupal8 -p 8084:80 -d feikede/drupal8-docker
 ```
 
 Enter "http://localhost:8084" in your browser and install drupal with database name = whatever, database host = mysql, password = mypassword, user = root.
 
-Drupal gets installed with the contributed modules
+Drupal gets installed with the contributed modules 
 
 * Chaos Tools (ctools)
-* Devel (devel)
 * Field Group (field_group)
 * Entity Reference Revisions (entity_reference_revisions)
 * Flag (flag)
@@ -32,37 +29,26 @@ Drupal gets installed with the contributed modules
 
 and the contributed theme
 
-* Bootstrap (bootstrap)
+* Bootstrap
 
-## Persistent Volumes
-Usually you want to keep some of the installation's files beyond container removal. I propose to use three volumes:
+## Even more quick with docker-compose
 
-* /var/www/html/web/themes/custom - custom themes you want to install
-* /var/www/html/web/modules/custom - for custom modules you want to install (sure, you can install contributed modules here, too)
-* /var/www/html/web/publicfs - Drupal puts the "public files" here, like uploaded images etc. (by drupal - default this is /sites/default/files)
+You may use this compose file to get Drupal 8 with mariadb and phpmyadmin up and running very fast:
 
-Now, if you want to start the container with the publicfs directory mounted to your ./files path, use
-
-```bash
-docker run --link db:mysql --name drupal8 -p 8084:80 -v $PWD/files:/var/www/html/web/publicfs -d feikede/drupal-dev
-chmod 777 ./files
-```
-
-## docker-compose
-You docker-compose like so to get up drupal, mariad and phpmyadmin:
-
-```yaml
+```yml
 version: '3'
 services:
   db:
     image: "mariadb"
+    container_name: db
     restart: unless-stopped
     volumes:
       - ./db:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: mariadb
-  app:
-    image: "feikede/drupal-dev"
+  asde8:
+    image: "feikede/drupal8-docker"
+    container_name: asde8
     restart: unless-stopped
     depends_on:
       - db
@@ -79,6 +65,7 @@ services:
       ENVIRONMENT: dev
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
     depends_on:
       - db
     environment:
@@ -91,7 +78,21 @@ services:
     ports:
       - 8082:80
 ```
+Go to "http://localhost:8080" for your Drupal 8 site or to "http://localhost:8082" for phpMyAdmin. The db-host for your installation is "db" here.
 
+## Persistent Volumes
+Usually you want to keep some of the installation's files beyond container removal. I propose to use three volumes:
+
+* /var/www/html/web/themes/custom - custom themes you want to install
+* /var/www/html/web/modules/custom - for custom modules you want to install (sure, you can install contributed modules here, too)
+* /var/www/html/web/publicfs - Drupal puts the "public files" here, like uploaded images etc. (by drupal - default this is /sites/default/files)
+
+Now, if you want to start the container with the publicfs directory mounted to your ./files path, use
+
+```bash
+docker run --link db:mysql --name drupal8 -p 8084:80 -v $PWD/files:/var/www/html/web/publicfs -d feikede/drupal8-docker
+chmod 777 ./files
+```
 
 ## Run drush commands
 You can use drush inside of the container, keep in mind that your changes to non-volume filesystems will be lost after removing the container.
@@ -101,7 +102,7 @@ rainer@tuxtop ~/src/asde8modules $ docker exec -it drupal8 bash
 root@8b4cad8b87eb:/var/www/html# cd web
 root@8b4cad8b87eb:/var/www/html/web# ../vendor/drush/drush/drush cr
  [success] Cache rebuild complete.
-root@8b4cad8b87eb:/var/www/html/web#
+root@8b4cad8b87eb:/var/www/html/web# 
 ```
 
 ## Run drupal console commands
@@ -113,10 +114,10 @@ root@8b4cad8b87eb:/var/www/html# cd web
 root@8b4cad8b87eb:/var/www/html/web# ../vendor/drupal/console/bin/drupal cache:rebuild
 
  Rebuilding cache(s), wait a moment please.
-
+                                                                                                                        
  [OK] Done clearing cache(s).                                                                                           
 
-root@8b4cad8b87eb:/var/www/html/web#
+root@8b4cad8b87eb:/var/www/html/web# 
 ```
 
 ## Run composer commands in container
@@ -135,7 +136,8 @@ Package operations: 1 install, 0 updates, 0 removals
 Writing lock file
 Generating autoload files
 > DrupalProject\composer\ScriptHandler::createRequiredFiles
-root@8b4cad8b87eb:/var/www/html#
+root@8b4cad8b87eb:/var/www/html# 
 ```
 
 Keep in mind, that these contributed modules will be installed at the non-mounted path at /modules/contributed. But that's fantastic for testing purposes and upgrade szenarios.
+

@@ -1,0 +1,38 @@
+version: '3'
+services:
+  db:
+    image: "mariadb"
+    restart: unless-stopped
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mariadb
+  app:
+    image: "feikede/drupal-dev"
+    restart: unless-stopped
+    depends_on:
+      - db
+    links:
+      - db
+    volumes:
+      - ./publicfs:/var/www/html/web/publicfs
+      - ./custom_modules:/var/www/html/web/modules/custom
+      - ./custom_themes:/var/www/html/web/themes/custom
+    ports:
+      - 8080:80    
+    environment:
+      DOCUMENT_ROOT: /var/www/html
+      ENVIRONMENT: dev
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    environment:
+      PMA_USER: root
+      PMA_PASSWORD: mariadb
+      PMA_HOST: db
+    restart: unless-stopped
+    links:
+      - db
+    ports:
+      - 8082:80
