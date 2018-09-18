@@ -1,5 +1,5 @@
 #
-# Drupal 7 with composer and drush
+# Drupal 8 with composer and drush
 #
 FROM php:7-apache
 
