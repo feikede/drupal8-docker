@@ -3,6 +3,7 @@
 Use my docker image from docker hub at https://hub.docker.com/r/feikede/drupal-dev/ - it should run out of the box.
 
 Settings.local.php is installed and activated with cache-backend /dev/null. CSS and JS aggregation is disabled. XDebug port is 9000 (default).
+Check this page for using xdebug with PHPStorm and docker: https://serversforhackers.com/c/getting-xdebug-working
 
 ## Quickstart Drupal 8, composer, drush with docker run
 First start a db:
