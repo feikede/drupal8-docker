@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+/etc/rc3.d/S01mysql start
+
+/usr/local/bin/apache2-foreground
