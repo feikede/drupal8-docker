@@ -9,6 +9,6 @@ composer create-project drupal-composer/drupal-project:8.x-dev my_site_name_dir 
 docker run --name d8rtest1 -p 17564:80 -v $PWD/my_site_name_dir:/webserver/webroot -d feikede/d8r:latest
 ```
 
-Connect to localhost:17564, use database-user=root, database-pwd=mariadb. 
+Connect to localhost:17564, use database=drupal, database-user=drupal, database-pwd=drupal for your fresh drupal installation. 
 
 Have fun.

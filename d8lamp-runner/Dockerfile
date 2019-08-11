@@ -9,9 +9,9 @@ RUN php -r "if (hash_file('sha384', 'composer-setup.php') === 'a5c698ffe4b8e849a
 RUN php composer-setup.php
 RUN php -r "unlink('composer-setup.php');"
 RUN mv composer.phar /usr/local/bin/composer
+RUN apt-get -y install mariadb-server-10.3
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mariadb-server-10.3 mysql-server/root_password password mariadb'"]
 RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mariadb-server-10.3 mysql-server/root_password_again password mariadb'"]
-RUN apt-get -y install mariadb-server-10.3
 RUN sed -i 's:DocumentRoot /var/www/html:DocumentRoot /webserver/webroot/web:g' /etc/apache2/sites-enabled/000-default.conf
 RUN { \
 		echo '<Directory /webserver/webroot/>'; \
