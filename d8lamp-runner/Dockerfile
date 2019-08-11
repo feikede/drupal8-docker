@@ -20,6 +20,8 @@ RUN { \
 		echo '	Require all granted'; \
 		echo '</Directory>'; \
 	} >> /etc/apache2/apache2.conf
+RUN a2enmod rewrite
+RUN echo pdo_mysql.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini
 COPY d8d /usr/local/bin/
 RUN mkdir -p /webserver/webroot
 WORKDIR /webserver/webroot
