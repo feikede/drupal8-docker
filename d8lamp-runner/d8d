@@ -13,7 +13,7 @@ for i in {30..0}; do
 		done
 
 echo "CREATE DATABASE IF NOT EXISTS drupal ;" | mysql
-echo "CREATE USER 'drupal'@'localhost' IDENTIFIED BY 'drupal' ;" | mysql
+echo "CREATE USER IF NOT EXISTS 'drupal'@'localhost' IDENTIFIED BY 'drupal' ;" | mysql
 echo "GRANT ALL ON \`drupal\`.* TO 'drupal'@'localhost' ;" | mysql
 
 /usr/local/bin/apache2-foreground
