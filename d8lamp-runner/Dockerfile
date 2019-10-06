@@ -9,9 +9,10 @@ RUN php -r "if (hash_file('sha384', 'composer-setup.php') === 'a5c698ffe4b8e849a
 RUN php composer-setup.php
 RUN php -r "unlink('composer-setup.php');"
 RUN mv composer.phar /usr/local/bin/composer
-RUN apt-get -y install mariadb-server-10.3
-RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mariadb-server-10.3 mysql-server/root_password password mariadb'"]
-RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mariadb-server-10.3 mysql-server/root_password_again password mariadb'"]
+RUN apt-get update -yqq
+RUN apt-get -y install vim openssh-server mariadb-server-10.3
+RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mariadb-server-10.3 mariadb-server/root_password password mariadb'"]
+RUN ["/bin/bash", "-c", "debconf-set-selections <<< 'mariadb-server-10.3 mariadb-server/root_password_again password mariadb'"]
 RUN sed -i 's:DocumentRoot /var/www/html:DocumentRoot /webserver/webroot/web:g' /etc/apache2/sites-enabled/000-default.conf
 RUN { \
 		echo '<Directory /webserver/webroot/>'; \
@@ -24,5 +25,6 @@ RUN a2enmod rewrite
 RUN echo pdo_mysql.default_socket=/var/run/mysqld/mysqld.sock >> /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini
 COPY d8d /usr/local/bin/
 RUN mkdir -p /webserver/webroot
+RUN echo "AllowGroups drupal" >> /etc/ssh/sshd_config
 WORKDIR /webserver/webroot
 CMD ["d8d"]

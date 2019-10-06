@@ -1,6 +1,21 @@
 #!/bin/bash
 set -e
 
+
+# create drupal user with default pwd drupal
+if [ -z "$DRUPALPWD" ]; then export DRUPALPWD="drupal"; fi
+if [ ! -d "/home/drupal" ]; then
+  groupadd drupal
+  useradd -m drupal -g drupal
+  echo -e "$DRUPALPWD\n$DRUPALPWD" | passwd drupal
+  # create ssh keys
+  runuser -l drupal -c "ssh-keygen -t rsa -N '' -f /home/drupal/.ssh/id_rsa"
+fi
+
+export APACHE_RUN_USER=drupal
+export APACHE_RUN_GROUP=drupal
+
+/etc/rc3.d/S01ssh start
 /etc/rc3.d/S01mysql start
 
 # wait for server to start
@@ -12,6 +27,7 @@ for i in {30..0}; do
 			sleep 1
 		done
 
+# create db if not already here
 echo "CREATE DATABASE IF NOT EXISTS drupal ;" | mysql
 echo "CREATE USER IF NOT EXISTS 'drupal'@'localhost' IDENTIFIED BY 'drupal' ;" | mysql
 echo "GRANT ALL ON \`drupal\`.* TO 'drupal'@'localhost' ;" | mysql

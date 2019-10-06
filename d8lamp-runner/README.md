@@ -11,4 +11,12 @@ docker run --name d8rtest1 -p 17564:80 -v $PWD/my_site_name_dir:/webserver/webro
 
 Connect to localhost:17564, use database=drupal, database-user=drupal, database-pwd=drupal for your fresh drupal installation. 
 
+apache in the container runs as user drupal. There's also a sshd running and user drupal is allowd to connect. You map that out like -p 17563:22 or whatever port you like.
+
+Also, theres a ssh keypair for drupal (need that for gitlab CI). Cat it out like 
+
+```bash
+docker exec -it d8rtest1 cat /home/drupal/.ssh/id_rsa.pub
+```
+
 Have fun.
